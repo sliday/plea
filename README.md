@@ -32,7 +32,7 @@ Six phases, executed in order:
 2. **PREFILL** — confirms derived facts ("I see Next.js + Prisma + PostgreSQL. Correct?")
 3. **INTERVIEW** — one binary question at a time, re-assess after every answer
 4. **SYNTHESIZE** — generates `PLAN.md` with files, changes, implementation order
-5. **PERSIST** — saves session to `.clarify/sessions/` for resumption
+5. **PERSIST** — saves session to `.plea/sessions/` for resumption
 6. **OFFER** — asks whether to start execution
 
 ### The Clinical Method
@@ -68,12 +68,12 @@ Rooted in proven frameworks:
 
 ## Session Data
 
-Sessions saved to `.clarify/sessions/<timestamp>.json`. Contains all questions, answers, and contradictions. Enables resuming interrupted interviews.
+Sessions saved to `.plea/sessions/<timestamp>.json`. Contains all questions, answers, and contradictions. Enables resuming interrupted interviews.
 
 ## Files Generated
 
 - `PLAN.md` — execution plan in project root
-- `.clarify/sessions/*.json` — interview session data
+- `.plea/sessions/*.json` — interview session data
 - `CLAUDE.local.md` — key decisions appended (with permission)
 
 ## Credits

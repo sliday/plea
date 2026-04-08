@@ -41,7 +41,7 @@ If the user responds with text instead of clicking Yes/No, incorporate the infor
 Gather context SILENTLY. Do not narrate what you're reading. Read these files (skip missing):
 
 1. `PLAN.md` in project root
-2. `.clarify/` directory for prior sessions
+2. `.plea/` directory for prior sessions
 3. `CLAUDE.local.md` for stored decisions
 4. `CLAUDE.md` / `AGENTS.md` for project conventions
 
@@ -175,7 +175,7 @@ Generate PLAN.md SILENTLY. No commentary.
 
 ### 5.1: Session File
 
-Create `.clarify/sessions/{YYYY-MM-DD-HHmmss}.json`:
+Create `.plea/sessions/{YYYY-MM-DD-HHmmss}.json`:
 
 ```json
 {
@@ -204,7 +204,7 @@ Append:
 ### 5.3: Gitignore
 
 ```
-question: "Add .clarify/ to .gitignore?"
+question: "Add .plea/ to .gitignore?"
 options: ["Yes", "No"]
 ```
 

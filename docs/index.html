@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>plea.dev — Stop guessing. Start diagnosing.</title>
+  <meta name="description" content="Adaptive clinical interview plugin for Claude Code. One yes/no question at a time, re-assess after every answer, output a concrete PLAN.md.">
+  <meta property="og:title" content="plea.dev — Adaptive Interview for Claude Code">
+  <meta property="og:description" content="Binary yes/no questions before coding. Differential diagnosis for software requirements.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://plea.dev">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daub-ui@latest/daub.css">
+
+  <style>
+    :root {
+      --color-bg: #0a0a0a;
+      --color-surface: #141414;
+      --color-surface-2: #1a1a1a;
+      --color-text: #e2e2e2;
+      --color-text-muted: #888888;
+      --color-accent: #3B82F6;
+      --color-cta: #F97316;
+      --color-border: #262626;
+      --color-green: #22C55E;
+      --font-display: 'JetBrains Mono', monospace;
+      --font-body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-text);
+      margin-bottom: 16px;
+    }
+
+    .brand span {
+      color: var(--color-accent);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--color-text-muted);
+      max-width: 480px;
+      margin-bottom: 32px;
+    }
+
+    .install-block {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      color: var(--color-green);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+
+    .install-block:hover {
+      border-color: var(--color-accent);
+    }
+
+    .install-block .copy-hint {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+      font-family: var(--font-body);
+    }
+
+    .install-block.copied {
+      border-color: var(--color-green);
+    }
+
+    .install-block.copied .copy-hint {
+      color: var(--color-green);
+    }
+
+    /* Sections */
+    section {
+      padding: 80px 0;
+    }
+
+    section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 3vw, 1.5rem);
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--color-text);
+    }
+
+    section p {
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    /* Problem section */
+    .flow-compare {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .flow-compare {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .flow-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .flow-box h3 {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .flow-box.before h3 { color: #EF4444; }
+    .flow-box.after h3 { color: var(--color-green); }
+
+    .flow-box .steps {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      line-height: 1.8;
+    }
+
+    .flow-box .steps .arrow {
+      color: var(--color-border);
+      margin: 0 6px;
+    }
+
+    /* Diagram */
+    .mermaid {
+      margin: 24px 0;
+      text-align: center;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Terminal session */
+    .terminal {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .terminal-header {
+      background: var(--color-surface-2);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-border);
+    }
+
+    .terminal-dot:nth-child(1) { background: #EF4444; }
+    .terminal-dot:nth-child(2) { background: #F59E0B; }
+    .terminal-dot:nth-child(3) { background: #22C55E; }
+
+    .terminal-body {
+      padding: 16px 20px;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .terminal-body .prompt {
+      color: var(--color-accent);
+    }
+
+    .terminal-body .command {
+      color: var(--color-text);
+    }
+
+    .terminal-body .counter {
+      color: var(--color-cta);
+    }
+
+    .terminal-body .question {
+      color: var(--color-text-muted);
+    }
+
+    .terminal-body .option {
+      color: var(--color-green);
+    }
+
+    .terminal-body .success {
+      color: var(--color-green);
+    }
+
+    .terminal-body .dim {
+      color: #555;
+    }
+
+    /* Principles */
+    .principles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .principle {
+      border-left: 2px solid var(--color-accent);
+      padding-left: 16px;
+    }
+
+    .principle h3 {
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 4px;
+    }
+
+    .principle p {
+      font-size: 0.875rem;
+      margin-bottom: 0;
+    }
+
+    /* Depth modes */
+    .depths {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .depths {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .depth {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .depth-count {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    .depth-label {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin: 4px 0;
+    }
+
+    .depth-desc {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Methodology */
+    .methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .method-tag {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* Footer */
+    footer {
+      padding: 64px 0 48px;
+      text-align: center;
+      border-top: 1px solid var(--color-border);
+    }
+
+    footer .install-block {
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-accent);
+    }
+
+    .credits {
+      font-size: 0.8125rem;
+      color: #555;
+    }
+
+    .credits a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+    }
+
+    .credits a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Separator */
+    .sep {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="brand">plea<span>.</span>dev</div>
+    <h1>Stop guessing. Start diagnosing.</h1>
+    <p>One yes/no question at a time. Re-assess after every answer. A concrete plan at the end.</p>
+    <div class="install-block" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
+      claude plugins install plea@sliday
+      <span class="copy-hint">click to copy</span>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <div class="container">
+    <section>
+      <h2>The problem</h2>
+      <p>You give Claude one sentence. It starts coding with assumptions. Three revision cycles later, you're still not aligned.</p>
+      <div class="flow-compare">
+        <div class="flow-box before">
+          <h3>Without plea</h3>
+          <div class="steps">
+            Vague request<br>
+            <span class="arrow">&darr;</span><br>
+            Assumptions<br>
+            <span class="arrow">&darr;</span><br>
+            Wrong code<br>
+            <span class="arrow">&darr;</span><br>
+            Corrections<br>
+            <span class="arrow">&darr;</span><br>
+            More corrections...
+          </div>
+        </div>
+        <div class="flow-box after">
+          <h3>With plea</h3>
+          <div class="steps">
+            Vague request<br>
+            <span class="arrow">&darr;</span><br>
+            15 yes/no questions<br>
+            <span class="arrow">&darr;</span><br>
+            PLAN.md<br>
+            <span class="arrow">&darr;</span><br>
+            Right code, first try
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="sep">
+
+    <!-- How it works -->
+    <section>
+      <h2>How it works</h2>
+      <p>Six phases. Each one builds on the last. The interview loop is the core.</p>
+      <div class="mermaid">
+flowchart TD
+    A["Vague Request"] --> B["SCAN\nRead codebase + memory"]
+    B --> C["PREFILL\nConfirm derived facts"]
+    C --> D["INTERVIEW\nBinary questions"]
+    D --> E{"RE-ASSESS\nUpdate full picture"}
+    E -->|"More needed"| D
+    E -->|"Enough data"| F["SYNTHESIZE\nGenerate PLAN.md"]
+    F --> G["PERSIST\nSave session"]
+    G --> H["OFFER\nStart building?"]
+      </div>
+    </section>
+
+    <hr class="sep">
+
+    <!-- Sample session -->
+    <section>
+      <h2>Sample session</h2>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dot"></div>
+          <div class="terminal-dot"></div>
+          <div class="terminal-dot"></div>
+        </div>
+        <div class="terminal-body">
+          <span class="prompt">&gt;</span> <span class="command">/plea:plea build a weather widget</span><br><br>
+          <span class="counter">[1/~15]</span> <span class="question">Is this a standalone widget, not part of a larger app?</span><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
+          <span class="counter">[2/~14]</span> <span class="question">Does it need live weather data from an external API?</span><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
+          <span class="counter">[3/~12]</span> <span class="question">Should it show current conditions only, not forecasts?</span><br>
+          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br><br>
+          <span class="counter">[4/~12]</span> <span class="question">Does the forecast need hourly granularity?</span><br>
+          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br><br>
+          <span class="counter">[5/~11]</span> <span class="question">Is this web-based (HTML/CSS/JS)?</span><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
+          <span class="dim">&nbsp;&nbsp;... 6 more questions, counter adapting ...</span><br><br>
+          <span class="success">&#10003; PLAN.md written (11 decisions, 6 files planned)</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="sep">
+
+    <!-- Clinical method -->
+    <section>
+      <h2>The clinical method</h2>
+      <p>Modeled on differential diagnosis. Each question eliminates a branch of the decision tree. The protocol is a tree, not a list.</p>
+      <div class="principles">
+        <div class="principle">
+          <h3>Binary only</h3>
+          <p>Every question is yes or no. "A or B?" becomes two questions: "Is it A?" then "Is it B?" No ambiguity.</p>
+        </div>
+        <div class="principle">
+          <h3>Re-assess after every answer</h3>
+          <p>After each response, update the full picture. Eliminate branches. Unlock new ones. Recalculate what to ask next. Not a script.</p>
+        </div>
+        <div class="principle">
+          <h3>Contradiction detection</h3>
+          <p>If you say "no database" then "persistent user accounts" — the plugin catches it and asks you to resolve the conflict.</p>
+        </div>
+      </div>
+      <div class="methods">
+        <span class="method-tag">Differential Diagnosis</span>
+        <span class="method-tag">TRIZ</span>
+        <span class="method-tag">Kepner-Tregoe</span>
+        <span class="method-tag">Adaptive Clinical Interview</span>
+      </div>
+    </section>
+
+    <hr class="sep">
+
+    <!-- Depth modes -->
+    <section>
+      <h2>Depth modes</h2>
+      <p>Auto-detected from your request. The total is a living number — it changes as branches open and close.</p>
+      <div class="depths">
+        <div class="depth">
+          <div class="depth-count">~5</div>
+          <div class="depth-label">Compact</div>
+          <div class="depth-desc">Small, well-defined changes</div>
+        </div>
+        <div class="depth">
+          <div class="depth-count">~15</div>
+          <div class="depth-label">Standard</div>
+          <div class="depth-desc">New feature or module</div>
+        </div>
+        <div class="depth">
+          <div class="depth-count">30+</div>
+          <div class="depth-label">Thorough</div>
+          <div class="depth-desc">Architecture decisions</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="install-block" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
+        claude plugins install plea@sliday
+        <span class="copy-hint">click to copy</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/sliday/plea">GitHub</a>
+        <a href="https://github.com/sliday/claude-plugins">Marketplace</a>
+      </div>
+      <div class="credits">
+        by <a href="https://github.com/azamat">Azamat Sultanov</a> &amp; <a href="https://github.com/sliday">Stas Kulesh</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/daub-ui@latest/daub.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#3B82F6',
+        primaryTextColor: '#e2e2e2',
+        primaryBorderColor: '#262626',
+        lineColor: '#888888',
+        secondaryColor: '#141414',
+        tertiaryColor: '#1a1a1a',
+        background: '#0a0a0a',
+        mainBkg: '#141414',
+        nodeBorder: '#262626',
+        clusterBkg: '#141414',
+        titleColor: '#e2e2e2',
+        edgeLabelBackground: '#0a0a0a'
+      }
+    });
+
+    function copyInstall(el) {
+      navigator.clipboard.writeText('claude plugins install plea@sliday');
+      el.classList.add('copied');
+      el.querySelector('.copy-hint').textContent = 'copied!';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('.copy-hint').textContent = 'click to copy';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
