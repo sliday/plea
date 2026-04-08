@@ -1,0 +1,9 @@
+{
+  "name": "clarify",
+  "version": "0.5.0",
+  "description": "Adaptive interview that asks binary questions before coding, then outputs PLAN.md",
+  "author": {
+    "name": "stas"
+  },
+  "license": "MIT"
+}
