@@ -82,16 +82,11 @@ One question at a time. **After every answer, re-assess the full picture before 
 ### Step 3.1: Depth
 
 ```
-question: "~15 questions for '{request}'. OK, or change depth?"
-options: ["Yes", "No"]
+question: "Interview depth for '{request}'?"
+options: ["Quick (~5 questions, ~1 min)", "Standard (~15 questions, ~3 min)", "Thorough (30+ questions, ~8 min)"]
 ```
 
-If No:
-```
-question: "Shorter interview (~5 questions)?"
-options: ["Yes", "No"]
-```
-If Yes → compact. If No → thorough (30+).
+This is the ONE exception where more than two options are allowed — it's a depth setting, not a design question.
 
 ### Step 3.2: Load Taxonomy
 
@@ -114,7 +109,7 @@ options: ["Yes", "No"]
 
 **STOP. Wait for response.**
 
-#### B. RE-ASSESS — update the full picture
+#### B. RE-ASSESS — update the full picture and show the delta
 
 This is the critical step. After EVERY answer, before picking the next question, you MUST:
 
@@ -125,16 +120,21 @@ This is the critical step. After EVERY answer, before picking the next question,
    question: "Conflict: you said '{A}' but also '{B}'. Keep which?"
    options: ["Keep first", "Keep second"]
    ```
-4. **Eliminate branches.** Which axes or questions are now irrelevant? Remove them. Reduce the total estimate.
-5. **Unlock branches.** Did the answer reveal new complexity? Add deeper questions. Increase the total estimate.
-6. **Recalculate priority.** What is now the MOST informative question to ask? It may be on a completely different axis than the last one.
-7. **If free text was given** instead of Yes/No: extract all facts from it. Mark any questions it implicitly answered. Acknowledge briefly: "Got it — that covers {X} too."
+4. **Eliminate branches.** Which axes or questions are now irrelevant? Remove them.
+5. **Unlock branches.** Did the answer reveal new complexity? Add deeper questions.
+6. **Show the delta.** This is what makes the adaptive tree visible. Print a brief status line BEFORE asking the next question:
+   - If questions were eliminated: `{N} skipped ({reason}) · ~{remaining} remaining`
+   - If questions were added: `+{N} unlocked ({reason}) · ~{remaining} remaining`
+   - If no change: `~{remaining} remaining`
+   - Examples:
+     - `3 skipped (no database = skip data axis) · ~9 remaining`
+     - `+2 unlocked (auth details needed) · ~14 remaining`
+     - `4 skipped (existing framework covers this) · ~6 remaining`
+   The delta shows the developer their answer CHANGED the tree. This builds trust and makes the adaptive nature the star of the show.
+7. **Recalculate priority.** What is now the MOST informative question to ask? It may be on a completely different axis than the last one.
+8. **If free text was given** instead of Yes/No: extract all facts from it. Mark any questions it implicitly answered. Show: `Got it — that also answers {N} questions. ~{remaining} remaining.`
 
 Only AFTER completing re-assessment → go back to step A.
-
-The total estimate (`~N`) is a living number. It should change as branches open and close. Show the updated estimate in every question's progress counter.
-
-7. **Go to step 1.**
 
 ### Step 3.4: Safety Valves
 

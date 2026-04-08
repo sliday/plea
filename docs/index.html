@@ -420,6 +420,8 @@
     .terminal-body .option { color: var(--color-green); }
     .terminal-body .success { color: var(--color-green); }
     .terminal-body .dim { color: #555; }
+    .terminal-body .delta-add { color: var(--color-accent); font-size: 0.75rem; }
+    .terminal-body .delta-skip { color: var(--color-cta); font-size: 0.75rem; }
 
     /* Principles */
     .principles {
@@ -641,17 +643,22 @@
         </div>
         <div class="terminal-body">
           <span class="prompt">&gt;</span> <span class="command">/plea:plea build a weather widget</span><br><br>
-          <span class="counter">[1/~15]</span> <span class="question">Is this a standalone widget, not part of a larger app?</span><br>
-          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
+          <span class="counter">[1/~15]</span> <span class="question">Is this a standalone web app, not part of a larger project?</span><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br>
+          <span class="dim">&nbsp;&nbsp;~14 remaining</span><br><br>
           <span class="counter">[2/~14]</span> <span class="question">Does it need live weather data from an external API?</span><br>
-          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
-          <span class="counter">[3/~12]</span> <span class="question">Should it show current conditions only, not forecasts?</span><br>
-          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br>
+          <span class="delta-add">&nbsp;&nbsp;+2 unlocked (API setup details) &middot; ~13 remaining</span><br><br>
+          <span class="counter">[3/~13]</span> <span class="question">Should it show current conditions only, not forecasts?</span><br>
+          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br>
+          <span class="delta-add">&nbsp;&nbsp;+1 unlocked (forecast granularity) &middot; ~12 remaining</span><br><br>
           <span class="counter">[4/~12]</span> <span class="question">Does the forecast need hourly granularity?</span><br>
-          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br><br>
-          <span class="counter">[5/~11]</span> <span class="question">Is this web-based (HTML/CSS/JS)?</span><br>
-          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br><br>
-          <span class="dim">&nbsp;&nbsp;... 6 more questions, counter adapting ...</span><br><br>
+          <span class="option">&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;&nbsp;&#10095; No</span><br>
+          <span class="delta-skip">&nbsp;&nbsp;3 skipped (simple daily is enough) &middot; ~8 remaining</span><br><br>
+          <span class="counter">[5/~8]</span> <span class="question">Should it auto-detect location via browser geolocation?</span><br>
+          <span class="option">&nbsp;&nbsp;&#10095; Yes&nbsp;&nbsp;&nbsp;No</span><br>
+          <span class="delta-skip">&nbsp;&nbsp;2 skipped (no manual city search needed) &middot; ~5 remaining</span><br><br>
+          <span class="dim">&nbsp;&nbsp;... 5 more questions ...</span><br><br>
           <span class="success">&#10003; PLAN.md written (11 decisions, 6 files planned)</span>
         </div>
       </div>
@@ -756,15 +763,9 @@ flowchart TD
   <!-- Footer -->
   <footer>
     <div class="container">
-      <div class="install-steps">
-        <div class="install-block" onclick="copyCmd(this,'claude plugins add-marketplace sliday/claude-plugins')" onkeydown="if(event.key==='Enter')copyCmd(this,'claude plugins add-marketplace sliday/claude-plugins')" role="button" tabindex="0" aria-label="Copy marketplace command">
-          <span class="install-prefix">1.</span> claude plugins add-marketplace sliday/claude-plugins
-          <span class="copy-hint">click to copy</span>
-        </div>
-        <div class="install-block" onclick="copyCmd(this,'claude plugins install plea@sliday')" onkeydown="if(event.key==='Enter')copyCmd(this,'claude plugins install plea@sliday')" role="button" tabindex="0" aria-label="Copy install command">
-          <span class="install-prefix">2.</span> claude plugins install plea@sliday
-          <span class="copy-hint">click to copy</span>
-        </div>
+      <div class="install-block" onclick="copyCmd(this,'claude plugins add-marketplace sliday/claude-plugins && claude plugins install plea@sliday')" onkeydown="if(event.key==='Enter')copyCmd(this,'claude plugins add-marketplace sliday/claude-plugins && claude plugins install plea@sliday')" role="button" tabindex="0" aria-label="Copy install command">
+        claude plugins add-marketplace sliday/claude-plugins &&<br>claude plugins install plea@sliday
+        <span class="copy-hint">click to copy</span>
       </div>
       <div class="footer-links">
         <a href="https://github.com/sliday/plea">GitHub</a>
