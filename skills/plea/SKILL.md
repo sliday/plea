@@ -72,22 +72,33 @@ AskUserQuestion(question: "[{counter}/~{remaining}] What else should I know abou
 ```
 If user says "nothing" or similar, continue with binary questions. If they provide info, extract facts, skip questions already answered, show: `Got it — covers {N} questions. ~{remaining} remaining.`
 
-**5b.** Print a brief context line (1-2 sentences) explaining what this question means and why it matters. For example:
+**5b.** Call AskUserQuestion with context descriptions on each option. The descriptions explain what choosing Yes or No would mean:
 ```
-Menu bar apps stay visible as a small icon. Regular windows are resizable and appear in the Dock.
+AskUserQuestion(
+  question: "[{counter}/~{remaining}] {yes/no question}?",
+  options: [
+    {"value": "Yes", "description": "{what Yes means — 1 sentence, factual}"},
+    {"value": "No", "description": "{what No means — 1 sentence, factual}"}
+  ]
+)
 ```
-This context helps the user make an informed yes/no decision. Keep it factual, not persuasive. No recommendations.
 
-**5c.** Immediately after the context line, call AskUserQuestion. EXACTLY this format. NO MODIFICATIONS:
+Example:
 ```
-AskUserQuestion(question: "[{counter}/~{remaining}] {yes/no question}?", options: ["Yes", "No"])
+AskUserQuestion(
+  question: "[1/~15] Should this live in the macOS menu bar?",
+  options: [
+    {"value": "Yes", "description": "Small icon in menu bar, dropdown panel on click, always visible"},
+    {"value": "No", "description": "Regular resizable window, appears in Dock, standard app behavior"}
+  ]
+)
 ```
 
-IMPORTANT CONSTRAINTS ON 5c:
-- options MUST be ["Yes", "No"] — never anything else
+IMPORTANT CONSTRAINTS ON 5b:
+- EXACTLY two options: Yes and No — never more
+- descriptions are factual, not persuasive — no "Recommended" labels
 - question MUST be answerable with yes or no
 - question MUST NOT contain "or" offering alternatives
-- question MUST NOT have descriptions, recommendations, or context in parentheses
 - DO NOT add numbered lists, categories, steppers, or navigation UI
 
 **5d.** STOP. Wait for response. Do NOT continue until user responds.
