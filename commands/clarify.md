@@ -4,7 +4,7 @@ argument-hint: "[describe what you want to build]"
 disable-model-invocation: true
 ---
 
-Invoke the clarify skill and follow it exactly as presented to you.
+Invoke the @clarify:clarify skill and follow it exactly as presented to you.
 
 The user's request is: $ARGUMENTS
 
