@@ -733,25 +733,44 @@
     </section>
 
 
-    <!-- Depth modes -->
+    <!-- Depth as sensitivity dial -->
     <section>
-      <h2>Depth modes</h2>
-      <p>Auto-detected from your request. The total is a living number — it changes as branches open and close.</p>
+      <h2>Depth is a sensitivity dial, not a cap</h2>
+      <p>All modes can grow beyond their starting target. A quick interview that discovers auth + real-time + offline will add questions for those axes. The difference: quick only adds for critical unknowns, thorough adds for nice-to-know details too.</p>
       <div class="depths">
         <div class="depth">
           <div class="depth-count">~5</div>
-          <div class="depth-label">Compact</div>
-          <div class="depth-desc">Small, well-defined changes</div>
+          <div class="depth-label">Quick</div>
+          <div class="depth-desc">Adds questions only for critical blockers</div>
         </div>
         <div class="depth">
           <div class="depth-count">~15</div>
           <div class="depth-label">Standard</div>
-          <div class="depth-desc">New feature or module</div>
+          <div class="depth-desc">Explores when complexity is discovered</div>
         </div>
         <div class="depth">
           <div class="depth-count">30+</div>
           <div class="depth-label">Thorough</div>
-          <div class="depth-desc">Architecture decisions</div>
+          <div class="depth-desc">Proactively explores all branches</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Commands -->
+    <section>
+      <h2>Commands</h2>
+      <div class="terminal">
+        <div class="terminal-header" aria-hidden="true">
+          <div class="terminal-dot"></div>
+          <div class="terminal-dot"></div>
+          <div class="terminal-dot"></div>
+        </div>
+        <div class="terminal-body">
+          <span class="command">/plea:plea</span> <span class="dim">— default interview, asks depth</span><br>
+          <span class="command">/plea:short</span> <span class="dim">— quick ~5 questions, high threshold</span><br>
+          <span class="command">/plea:regular</span> <span class="dim">— standard ~15 questions</span><br>
+          <span class="command">/plea:long</span> <span class="dim">— thorough 30+ questions</span><br>
+          <span class="command">/plea:chat</span> <span class="dim">— review and refine existing PLAN.md</span><br>
         </div>
       </div>
     </section>
