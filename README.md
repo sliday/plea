@@ -10,7 +10,7 @@ Not a script, a diagnosis. Each question eliminates a branch of the decision tre
 
 ```bash
 claude plugins marketplace add sliday/claude-plugins && \
-claude plugins install plea@sliday
+claude plugins install plea
 ```
 
 ## Commands
